@@ -51,6 +51,7 @@ public class MinecraftPacketHandler {
     @PacketHandler
     public void handleGameJoin(ServerGameJoinPacket e) {
         bot.setEntityId(e.playerId());
+        bot.getListeners().forEach(ls -> ls.gameJoined(e.playerId()));
     }
 
     @PacketHandler
@@ -61,14 +62,15 @@ public class MinecraftPacketHandler {
     }
 
     @PacketHandler
-    private void ackLoginSuccess(ServerLoginSuccessPacket p) throws IOException {
-        bot.setGameProfile(p.profile());
+    private void ackLoginSuccess(ServerLoginSuccessPacket e) throws IOException {
+        bot.setGameProfile(e.profile());
+        bot.getListeners().forEach(l -> l.loggedIn(e.profile()));
         connection.setState(GameState.CONFIGURATION);
         connection.sendPacket(new ClientLoginAcknowledgedPacket());
     }
 
     @PacketHandler
-    private void handleLoginCompression(ServerLoginCompressionPacket p) {
-        connection.setCompressionThreshold(p.threshold());
+    private void handleLoginCompression(ServerLoginCompressionPacket e) {
+        connection.setCompressionThreshold(e.threshold());
     }
 }

@@ -6,11 +6,13 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
+import io.github.defective4.minecraft.nbsdj.ClientListener;
 import io.github.defective4.minecraft.nbsdj.NoteBlockBot;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
@@ -38,7 +40,7 @@ public class MinecraftConnection implements AutoCloseable {
     private final int port;
     private final Socket socket = new Socket();
 
-    private GameState state;
+    private GameState state = GameState.HANDSHAKE;
 
     public MinecraftConnection(String host, int port, NoteBlockBot bot) {
         this.host = host;
@@ -125,6 +127,8 @@ public class MinecraftConnection implements AutoCloseable {
     }
 
     protected void setState(GameState state) {
+        Objects.requireNonNull(state);
+        for (ClientListener ls : bot.getListeners()) ls.gameStateChanged(this.state, state);
         this.state = state;
     }
 

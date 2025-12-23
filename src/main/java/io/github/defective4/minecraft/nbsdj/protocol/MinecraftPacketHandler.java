@@ -5,7 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import io.github.defective4.minecraft.nbsdj.NoteBlockBot;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ChatVisibility;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ClientInformation;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
+import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ParticlesSettings;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigFinishedPacket;
@@ -13,6 +17,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
 
 public class MinecraftPacketHandler {
@@ -44,6 +49,8 @@ public class MinecraftPacketHandler {
     @PacketHandler
     public void respondToServerKnownPacks(ServerConfigKnownPacksPacket e) throws IOException {
         connection.sendPacket(new ClientConfigKnownPacksPacket(e.getPacks()));
+        connection.sendPacket(new ClientConfigInformationPacket(new ClientInformation("en_US", (byte) 4,
+                ChatVisibility.FULL, true, Byte.MAX_VALUE, Hand.RIGHT, false, true, ParticlesSettings.MINIMAL)));
     }
 
     @PacketHandler

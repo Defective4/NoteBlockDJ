@@ -9,6 +9,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigKnownPacksPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerGameJoinPacket;
 
 public class ClientboundPacketRegistry {
     private static final Map<GameState, Map<Integer, ClientboundPacketFactory<?>>> PACKETS = new HashMap<>();
@@ -25,6 +26,11 @@ public class ClientboundPacketRegistry {
             PACKETS.put(GameState.CONFIGURATION, map);
             map.put(3, ServerConfigFinishedPacket.FACTORY);
             map.put(14, ServerConfigKnownPacksPacket.FACTORY);
+        }
+        {
+            Map<Integer, ClientboundPacketFactory<?>> map = new HashMap<>();
+            PACKETS.put(GameState.PLAY, map);
+            map.put(48, ServerGameJoinPacket.FACTORY);
         }
     }
 

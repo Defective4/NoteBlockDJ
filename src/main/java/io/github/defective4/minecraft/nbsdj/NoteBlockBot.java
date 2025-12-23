@@ -7,8 +7,10 @@ import io.github.defective4.minecraft.nbsdj.protocol.MinecraftConnection;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 
 public class NoteBlockBot {
+    private int entityId = -1;
     private GameProfile gameProfile;
     private final String host;
+
     private final int port;
 
     public NoteBlockBot(String host, int port) {
@@ -23,6 +25,10 @@ public class NoteBlockBot {
         }
     }
 
+    public int getEntityId() {
+        return entityId;
+    }
+
     public GameProfile getGameProfile() {
         return gameProfile;
     }
@@ -33,6 +39,10 @@ public class NoteBlockBot {
 
     public int getPort() {
         return port;
+    }
+
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
     }
 
     public void setGameProfile(GameProfile gameProfile) {

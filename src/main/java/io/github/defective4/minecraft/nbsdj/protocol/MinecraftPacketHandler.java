@@ -16,6 +16,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigKnownPacksPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
@@ -45,6 +46,11 @@ public class MinecraftPacketHandler {
                             throw new IllegalStateException(e);
                         }
                     }
+    }
+
+    @PacketHandler
+    public void handleGameJoin(ServerGameJoinPacket e) {
+        bot.setEntityId(e.playerId());
     }
 
     @PacketHandler

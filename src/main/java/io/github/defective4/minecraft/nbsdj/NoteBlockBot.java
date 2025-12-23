@@ -1,6 +1,7 @@
 package io.github.defective4.minecraft.nbsdj;
 
 import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 import io.github.defective4.minecraft.nbsdj.protocol.MinecraftConnection;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
@@ -16,7 +17,7 @@ public class NoteBlockBot {
         this.port = port;
     }
 
-    public void connect(String username) throws IOException {
+    public void connect(String username) throws IOException, DataFormatException {
         try (MinecraftConnection connection = new MinecraftConnection(host, port, this)) {
             connection.open(username);
         }

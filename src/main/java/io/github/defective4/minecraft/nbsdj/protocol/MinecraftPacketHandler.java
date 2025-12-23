@@ -5,10 +5,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import io.github.defective4.minecraft.nbsdj.NoteBlockBot;
+import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigFinishedPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigKnownPacksPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
 
 public class MinecraftPacketHandler {
     private final NoteBlockBot bot;
@@ -17,6 +22,11 @@ public class MinecraftPacketHandler {
     public MinecraftPacketHandler(NoteBlockBot bot, MinecraftConnection connection) {
         this.connection = connection;
         this.bot = bot;
+    }
+
+    @PacketHandler
+    public void ackConfigurationFinished(ServerConfigFinishedPacket e) throws IOException {
+        connection.sendPacket(new ClientConfigFinishedPacket());
     }
 
     public void handle(ClientboundPacket packet) {
@@ -32,13 +42,19 @@ public class MinecraftPacketHandler {
     }
 
     @PacketHandler
-    private void handleLoginCompression(ServerLoginCompressionPacket p) {
-        connection.setCompressionThreshold(p.getThreshold());
+    public void respondToServerKnownPacks(ServerConfigKnownPacksPacket e) throws IOException {
+        connection.sendPacket(new ClientConfigKnownPacksPacket(e.getPacks()));
     }
 
     @PacketHandler
-    private void handleLoginSuccess(ServerLoginSuccessPacket p) throws IOException {
+    private void ackLoginSuccess(ServerLoginSuccessPacket p) throws IOException {
         bot.setGameProfile(p.getProfile());
+        connection.setState(GameState.CONFIGURATION);
         connection.sendPacket(new ClientLoginAcknowledgedPacket());
+    }
+
+    @PacketHandler
+    private void handleLoginCompression(ServerLoginCompressionPacket p) {
+        connection.setCompressionThreshold(p.getThreshold());
     }
 }

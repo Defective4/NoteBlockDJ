@@ -6,9 +6,13 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 import io.github.defective4.minecraft.nbsdj.NoteBlockBot;
+import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake.ClientHandshakePacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake.ClientIntention;
@@ -26,12 +30,15 @@ public class MinecraftConnection implements AutoCloseable {
     private final MinecraftPacketHandler handler;
 
     private final String host;
+    private final Inflater inflater = new Inflater(false);
     private DataInputStream input;
+
     private OutputStream output;
 
     private final int port;
-
     private final Socket socket = new Socket();
+
+    private GameState state;
 
     public MinecraftConnection(String host, int port, NoteBlockBot bot) {
         this.host = host;
@@ -49,6 +56,10 @@ public class MinecraftConnection implements AutoCloseable {
         return compressionThreshold;
     }
 
+    public GameState getState() {
+        return state;
+    }
+
     public boolean isClosed() {
         return socket.isClosed();
     }
@@ -57,12 +68,13 @@ public class MinecraftConnection implements AutoCloseable {
         return compressionThreshold >= 0;
     }
 
-    public void open(String username) throws IOException {
+    public void open(String username) throws IOException, DataFormatException {
         socket.connect(new InetSocketAddress(host, port));
         output = socket.getOutputStream();
         input = new DataInputStream(socket.getInputStream());
 
         sendPacket(new ClientHandshakePacket(PROTOCOL, host, port, ClientIntention.LOGIN));
+        setState(GameState.LOGIN);
         sendPacket(new ClientLoginPacket(username,
                 UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8))));
         while (!isClosed()) {
@@ -78,8 +90,13 @@ public class MinecraftConnection implements AutoCloseable {
                 int dataLen = tmpIn.readVarInt();
 
                 if (dataLen > 0) {
-                    data = new byte[0];
-                    packetId = -1;
+                    raw = new byte[dataLen];
+                    inflater.reset();
+                    inflater.setInput(tmpIn.readFully());
+                    inflater.inflate(raw);
+                    packetId = raw[0];
+                    data = new byte[raw.length - 1];
+                    System.arraycopy(raw, 1, data, 0, data.length);
                 } else {
                     packetId = tmpIn.readByte();
                     data = tmpIn.readFully();
@@ -91,14 +108,9 @@ public class MinecraftConnection implements AutoCloseable {
                 input.readFully(data);
             }
 
-            if(packetId == -1) {
-                System.out.println(1);
-            }
-
-            ClientboundPacketFactory<?> factory = ClientboundPacketRegistry.getPacketForId(packetId);
-            if (factory != null) {
-                ClientboundPacket packet = factory.createPacket(new PacketDataInput(data));
-
+            Optional<ClientboundPacketFactory<?>> factory = ClientboundPacketRegistry.getPacketForId(state, packetId);
+            if (factory.isPresent()) {
+                ClientboundPacket packet = factory.get().createPacket(new PacketDataInput(data));
                 handler.handle(packet);
             }
         }
@@ -110,6 +122,10 @@ public class MinecraftConnection implements AutoCloseable {
 
     protected void setCompressionThreshold(int compressionThreshold) {
         this.compressionThreshold = compressionThreshold;
+    }
+
+    protected void setState(GameState state) {
+        this.state = state;
     }
 
 }

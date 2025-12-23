@@ -3,8 +3,6 @@ package io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configu
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacketFactory;
 
-public class ServerConfigFinishedPacket extends ClientboundPacket {
+public record ServerConfigFinishedPacket() implements ClientboundPacket {
     public static final ClientboundPacketFactory<ServerConfigFinishedPacket> FACTORY = input -> new ServerConfigFinishedPacket();
-
-    public ServerConfigFinishedPacket() {}
 }

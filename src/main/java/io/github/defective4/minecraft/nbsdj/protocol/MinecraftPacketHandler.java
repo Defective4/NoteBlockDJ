@@ -32,6 +32,7 @@ public class MinecraftPacketHandler {
     @PacketHandler
     public void ackConfigurationFinished(ServerConfigFinishedPacket e) throws IOException {
         connection.sendPacket(new ClientConfigFinishedPacket());
+        connection.setState(GameState.PLAY);
     }
 
     public void handle(ClientboundPacket packet) {
@@ -48,20 +49,20 @@ public class MinecraftPacketHandler {
 
     @PacketHandler
     public void respondToServerKnownPacks(ServerConfigKnownPacksPacket e) throws IOException {
-        connection.sendPacket(new ClientConfigKnownPacksPacket(e.getPacks()));
+        connection.sendPacket(new ClientConfigKnownPacksPacket(e.packs()));
         connection.sendPacket(new ClientConfigInformationPacket(new ClientInformation("en_US", (byte) 4,
                 ChatVisibility.FULL, true, Byte.MAX_VALUE, Hand.RIGHT, false, true, ParticlesSettings.MINIMAL)));
     }
 
     @PacketHandler
     private void ackLoginSuccess(ServerLoginSuccessPacket p) throws IOException {
-        bot.setGameProfile(p.getProfile());
+        bot.setGameProfile(p.profile());
         connection.setState(GameState.CONFIGURATION);
         connection.sendPacket(new ClientLoginAcknowledgedPacket());
     }
 
     @PacketHandler
     private void handleLoginCompression(ServerLoginCompressionPacket p) {
-        connection.setCompressionThreshold(p.getThreshold());
+        connection.setCompressionThreshold(p.threshold());
     }
 }

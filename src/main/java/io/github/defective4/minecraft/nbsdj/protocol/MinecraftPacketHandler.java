@@ -17,15 +17,19 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.Se
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerKeepAlivePacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerPlayerPositionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientKeepAlivePacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientLoadedPacket;
 
 public class MinecraftPacketHandler {
     private final NoteBlockBot bot;
     private final MinecraftConnection connection;
+
+    private boolean firstTeleport = true;
 
     public MinecraftPacketHandler(NoteBlockBot bot, MinecraftConnection connection) {
         this.connection = connection;
@@ -60,6 +64,16 @@ public class MinecraftPacketHandler {
     public void handleKeepAlive(ServerKeepAlivePacket e) throws IOException {
         bot.getListeners().forEach(ls -> ls.keepAliveReceived(e.id()));
         connection.sendPacket(new ClientKeepAlivePacket(e.id()));
+    }
+
+    @PacketHandler
+    public void handlePlayerMovementSync(ServerPlayerPositionPacket e) throws IOException {
+        if (firstTeleport) {
+            firstTeleport = false;
+            connection.sendPacket(new ClientLoadedPacket());
+        }
+        bot.setLocation(e.newLocation());
+        bot.getListeners().forEach(ls -> ls.playerTeleported(e.newLocation()));
     }
 
     @PacketHandler

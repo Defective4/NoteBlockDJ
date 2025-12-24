@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.nbsdj;
 
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
+import io.github.defective4.minecraft.nbsdj.protocol.model.Vector3D;
 
 public interface ClientListener {
     void gameJoined(int entityId);
@@ -11,4 +12,6 @@ public interface ClientListener {
     void keepAliveReceived(long id);
 
     void loggedIn(GameProfile profile);
+
+    void playerTeleported(Vector3D newLocation);
 }

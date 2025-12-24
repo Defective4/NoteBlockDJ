@@ -12,6 +12,9 @@ public abstract class ClientAdapter implements ClientListener {
     public void gameStateChanged(GameState oldState, GameState newState) {}
 
     @Override
+    public void keepAliveReceived(long id) {}
+
+    @Override
     public void loggedIn(GameProfile profile) {}
 
 }

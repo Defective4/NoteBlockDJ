@@ -17,9 +17,11 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerGameJoinPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerKeepAlivePacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientKeepAlivePacket;
 
 public class MinecraftPacketHandler {
     private final NoteBlockBot bot;
@@ -52,6 +54,12 @@ public class MinecraftPacketHandler {
     public void handleGameJoin(ServerGameJoinPacket e) {
         bot.setEntityId(e.playerId());
         bot.getListeners().forEach(ls -> ls.gameJoined(e.playerId()));
+    }
+
+    @PacketHandler
+    public void handleKeepAlive(ServerKeepAlivePacket e) throws IOException {
+        bot.getListeners().forEach(ls -> ls.keepAliveReceived(e.id()));
+        connection.sendPacket(new ClientKeepAlivePacket(e.id()));
     }
 
     @PacketHandler

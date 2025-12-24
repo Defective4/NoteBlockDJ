@@ -8,5 +8,7 @@ public interface ClientListener {
 
     void gameStateChanged(GameState oldState, GameState newState);
 
+    void keepAliveReceived(long id);
+
     void loggedIn(GameProfile profile);
 }

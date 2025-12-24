@@ -10,6 +10,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerGameJoinPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.ServerKeepAlivePacket;
 
 public class ClientboundPacketRegistry {
     private static final Map<GameState, Map<Integer, ClientboundPacketFactory<?>>> PACKETS = new HashMap<>();
@@ -30,6 +31,7 @@ public class ClientboundPacketRegistry {
         {
             Map<Integer, ClientboundPacketFactory<?>> map = new HashMap<>();
             PACKETS.put(GameState.PLAY, map);
+            map.put(43, ServerKeepAlivePacket.FACTORY);
             map.put(48, ServerGameJoinPacket.FACTORY);
         }
     }

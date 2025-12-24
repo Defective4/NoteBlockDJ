@@ -1,4 +1,4 @@
-package io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake;
+package io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.handshake;
 
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
 

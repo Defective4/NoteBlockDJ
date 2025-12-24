@@ -1,4 +1,4 @@
-package io.github.defective4.minecraft.nbsdj.protocol.packet.client.login;
+package io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.login;
 
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
 

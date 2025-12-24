@@ -16,13 +16,13 @@ import io.github.defective4.minecraft.nbsdj.ClientListener;
 import io.github.defective4.minecraft.nbsdj.NoteBlockBot;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
-import io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake.ClientHandshakePacket;
-import io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake.ClientIntention;
-import io.github.defective4.minecraft.nbsdj.protocol.packet.client.login.ClientLoginPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacketFactory;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacketRegistry;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.PacketDataInput;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.handshake.ClientHandshakePacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.handshake.ClientIntention;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.login.ClientLoginPacket;
 
 public class MinecraftConnection implements AutoCloseable {
 

@@ -1,4 +1,4 @@
-package io.github.defective4.minecraft.nbsdj.protocol.packet.client.handshake;
+package io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.handshake;
 
 public enum ClientIntention {
     LOGIN(2);

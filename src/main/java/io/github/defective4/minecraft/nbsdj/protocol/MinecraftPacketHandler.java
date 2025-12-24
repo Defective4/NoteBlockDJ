@@ -10,7 +10,6 @@ import io.github.defective4.minecraft.nbsdj.protocol.model.ClientInformation;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
 import io.github.defective4.minecraft.nbsdj.protocol.model.ParticlesSettings;
-import io.github.defective4.minecraft.nbsdj.protocol.packet.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.ClientboundPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigFinishedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.configuration.ServerConfigKnownPacksPacket;
@@ -21,6 +20,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.clientbound.play.Ser
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigFinishedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientKeepAlivePacket;
 
 public class MinecraftPacketHandler {

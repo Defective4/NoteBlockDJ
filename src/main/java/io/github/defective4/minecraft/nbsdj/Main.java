@@ -1,7 +1,11 @@
 package io.github.defective4.minecraft.nbsdj;
 
+import java.io.File;
 import java.util.Timer;
 
+import io.github.defective4.minecraft.nbs.NBSTrack;
+import io.github.defective4.minecraft.nbs.io.NBSReader;
+import io.github.defective4.minecraft.nbsdj.music.SongStructure;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Vector3D;
@@ -11,8 +15,11 @@ public class Main {
         try {
 
             Timer timer = new Timer(true);
+            NBSTrack track = NBSReader.read(new File("/tmp/score.nbs"));
 
             NoteBlockBot bot = new NoteBlockBot("127.0.0.1", 25565);
+            SongStructure structure = new SongStructure(track,bot);
+
             bot.addListener(new ClientAdapter() {
 
                 private boolean firstTeleport = true;
@@ -34,13 +41,14 @@ public class Main {
 
                 @Override
                 public void playerTeleported(Vector3D newLocation) {
-                    System.out.println("Player teleported  to " + newLocation);
+                    System.out.println("Player teleported to " + newLocation);
                     if (firstTeleport) {
                         firstTeleport = false;
                         try {
                             bot.sendCommand("gamemode creative");
                             bot.sendCommand("clear");
 
+                            structure.build();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

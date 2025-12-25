@@ -77,6 +77,10 @@ public class NoteBlockBot {
         return Collections.unmodifiableList(listeners);
     }
 
+    public Vector3D getLocation() {
+        return location;
+    }
+
     public int getPort() {
         return port;
     }

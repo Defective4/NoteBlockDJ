@@ -28,6 +28,10 @@ public record BlockLocation(int x, int y, int z) {
         return new Vector3D(x, y, z);
     }
 
+    public BlockLocation add(BlockLocation location) {
+        return add(location.x, location.y, location.z);
+    }
+
     public BlockLocation add(int x, int y, int z) {
         return new BlockLocation(this.x + x, this.y + y, this.z + z);
     }

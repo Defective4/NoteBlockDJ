@@ -72,8 +72,13 @@ public class SongStructure {
             tasks.add(new SongTask<>(Type.DESTROY_BLOCK, base.add(0, -1, 0)));
 
             SimpleNote note = entry.getKey();
-            tasks.add(new SongTask<>(Type.GET_ITEM,
-                    new ItemStack(1, MusicBlockRelations.getBlockType(note.instrument()))));
+            ItemType block = MusicBlockRelations.getBlockType(note.instrument());
+            if (block == ItemType.SAND) {
+                tasks.add(new SongTask<>(Type.DESTROY_BLOCK, base.add(0, -2, 0)));
+                tasks.add(new SongTask<>(Type.GET_ITEM, new ItemStack(1, ItemType.GLASS)));
+                tasks.add(new SongTask<>(Type.USE_ITEM, base.add(0, -2, 0)));
+            }
+            tasks.add(new SongTask<>(Type.GET_ITEM, new ItemStack(1, block)));
 
             tasks.add(new SongTask<>(Type.USE_ITEM, base.add(0, -1, 0)));
             tasks.add(new SongTask<>(Type.GET_ITEM, new ItemStack(1, ItemType.NOTE_BLOCK)));
@@ -129,7 +134,7 @@ public class SongStructure {
                     timer = null;
                 }
             }
-        }, 0, 100);
+        }, 0, 50);
     }
 
     private void startPlayerTask() {

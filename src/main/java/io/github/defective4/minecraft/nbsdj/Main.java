@@ -15,7 +15,7 @@ public class Main {
         try {
 
             Timer timer = new Timer(true);
-            NBSTrack track = NBSReader.read(new File("/tmp/score.nbs"));
+            NBSTrack track = NBSReader.read(new File("/tmp/test.nbs"));
 
             NoteBlockBot bot = new NoteBlockBot("127.0.0.1", 25565);
             SongStructure structure = new SongStructure(track,bot);
@@ -45,9 +45,8 @@ public class Main {
                     if (firstTeleport) {
                         firstTeleport = false;
                         try {
-
-//                            structure.build();
-                            structure.play();
+                            structure.build();
+//                            structure.play();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

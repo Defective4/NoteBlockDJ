@@ -20,4 +20,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>io.github.defective4.minecraft.nbs</groupId>
+			<artifactId>jNBSLib</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 </project>

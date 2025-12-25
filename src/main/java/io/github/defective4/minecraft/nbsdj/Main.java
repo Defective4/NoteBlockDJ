@@ -40,6 +40,7 @@ public class Main {
                         try {
                             bot.sendCommand("gamemode creative");
                             bot.sendCommand("clear");
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

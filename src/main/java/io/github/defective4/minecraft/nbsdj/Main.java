@@ -5,6 +5,8 @@ import java.util.Timer;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ItemStack;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ItemType;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Vector3D;
 
 public class Main {
@@ -40,11 +42,17 @@ public class Main {
                         firstTeleport = false;
                         try {
                             bot.sendCommand("gamemode creative");
-                            for (int x = -4; x <= 4; x++) for (int z = -4; z <= 4; z++) for (int y = -2; y <= -1; y++) {
+                            bot.sendCommand("clear");
+                            bot.createItem(36, new ItemStack(1, ItemType.DIRT));
+                            for (int x = -4; x <= 4; x++) for (int z = -4; z <= 4; z++) {
                                 bot.swingArm(Hand.RIGHT);
-                                bot.destroyBlock(newLocation.add(x, y, z).toBlockLocation());
-                                Thread.sleep(100);
+                                bot.destroyBlock(newLocation.add(x, -1, z).toBlockLocation());
+                                bot.placeBlock(newLocation.add(x, -1, z).toBlockLocation());
+                                bot.swingArm(Hand.RIGHT);
+                                Thread.sleep(50);
                             }
+                            bot.sendCommand("gamemode survival");
+                            bot.sendCommand("clear");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

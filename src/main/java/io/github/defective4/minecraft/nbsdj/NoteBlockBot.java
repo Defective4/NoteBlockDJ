@@ -12,9 +12,12 @@ import io.github.defective4.minecraft.nbsdj.protocol.MinecraftConnection;
 import io.github.defective4.minecraft.nbsdj.protocol.model.BlockLocation;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
+import io.github.defective4.minecraft.nbsdj.protocol.model.ItemStack;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Vector3D;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientChatCommandPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientCreativeItemPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientDestroyBlockPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientPlaceBlockPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientSwingArmPacket;
 
 public class NoteBlockBot {
@@ -47,6 +50,10 @@ public class NoteBlockBot {
         }
     }
 
+    public void createItem(int slot, ItemStack item) throws IOException {
+        connection.sendPacket(new ClientCreativeItemPacket(slot, item));
+    }
+
     public void destroyBlock(BlockLocation location) throws IOException {
         connection.sendPacket(new ClientDestroyBlockPacket(location, Math.abs(random.nextInt())));
     }
@@ -69,6 +76,10 @@ public class NoteBlockBot {
 
     public int getPort() {
         return port;
+    }
+
+    public void placeBlock(BlockLocation location) throws IOException {
+        connection.sendPacket(new ClientPlaceBlockPacket(random.nextInt(0, Integer.MAX_VALUE), location));
     }
 
     public boolean removeListener(ClientListener listener) {

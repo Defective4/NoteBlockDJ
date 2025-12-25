@@ -22,6 +22,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configur
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigInformationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.configuration.ClientConfigKnownPacksPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.login.ClientLoginAcknowledgedPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientConfirmTeleportationPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientKeepAlivePacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientLoadedPacket;
 
@@ -72,6 +73,7 @@ public class MinecraftPacketHandler {
             firstTeleport = false;
             connection.sendPacket(new ClientLoadedPacket());
         }
+        connection.sendPacket(new ClientConfirmTeleportationPacket(e.syncId()));
         bot.setLocation(e.newLocation());
         bot.getListeners().forEach(ls -> ls.playerTeleported(e.newLocation()));
     }

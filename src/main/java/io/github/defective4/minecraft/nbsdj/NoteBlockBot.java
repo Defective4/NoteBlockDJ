@@ -44,6 +44,10 @@ public class NoteBlockBot {
         return listeners.add(listener);
     }
 
+    public void close() throws IOException {
+        connection.close();
+    }
+
     public void connect(String username) throws IOException, DataFormatException {
         try (MinecraftConnection connection = new MinecraftConnection(host, port, this)) {
             this.connection = connection;

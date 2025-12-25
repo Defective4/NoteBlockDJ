@@ -99,6 +99,11 @@ public class SongStructure {
         startBuildTaskTimer();
     }
 
+    public void cleanUpTimer() {
+        if (timer != null) timer.cancel();
+        timer = new Timer(true);
+    }
+
     public List<StructureListener> getListeners() {
         return Collections.unmodifiableList(listeners);
     }
@@ -112,11 +117,6 @@ public class SongStructure {
 
     public boolean removeListener(StructureListener listener) {
         return listeners.remove(listener);
-    }
-
-    private void cleanUpTimer() {
-        if (timer != null) timer.cancel();
-        timer = new Timer(true);
     }
 
     private void startBuildTaskTimer() {

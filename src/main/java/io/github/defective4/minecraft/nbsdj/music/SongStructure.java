@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.nbsdj.music;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,12 +23,12 @@ import io.github.defective4.minecraft.nbsdj.protocol.model.ItemType;
 
 public class SongStructure {
 
-    public static final int MAX_LENGTH = 4;
-    public static final int MAX_WIDTH = 4;
+    public static final int MAX_LENGTH = 3;
+    public static final int MAX_WIDTH = 3;
 
     private final NoteBlockBot bot;
 
-    private final Map<BlockLocation, SimpleNote> notes = new LinkedHashMap<>();
+    private final Map<SimpleNote, BlockLocation> notes = new LinkedHashMap<>();
     private final List<SongTask<?>> tasks = new ArrayList<>();
     private Timer timer;
 
@@ -54,21 +55,23 @@ public class SongStructure {
                 if (!notesI.hasNext()) break;
                 for (int z = -MAX_LENGTH; z <= MAX_LENGTH; z++) {
                     if (!notesI.hasNext()) break;
-                    this.notes.put(new BlockLocation(x, y, z), notesI.next());
+                    this.notes.put(notesI.next(), new BlockLocation(x, y, z));
                 }
             }
         }
     }
 
-    public void build() {
+    public void build() throws IOException {
         tasks.clear();
-        for (Entry<BlockLocation, SimpleNote> entry : notes.entrySet()) {
-            BlockLocation base = bot.getLocation().toBlockLocation().add(entry.getKey());
+        bot.sendCommand("gamemode creative");
+        bot.sendCommand("clear");
+        for (Entry<SimpleNote, BlockLocation> entry : notes.entrySet()) {
+            BlockLocation base = bot.getLocation().toBlockLocation().add(entry.getValue());
 
             tasks.add(new SongTask<>(Type.DESTROY_BLOCK, base));
             tasks.add(new SongTask<>(Type.DESTROY_BLOCK, base.add(0, -1, 0)));
 
-            SimpleNote note = entry.getValue();
+            SimpleNote note = entry.getKey();
             tasks.add(new SongTask<>(Type.GET_ITEM,
                     new ItemStack(1, MusicBlockRelations.getBlockType(note.instrument()))));
 
@@ -81,12 +84,23 @@ public class SongStructure {
                 tasks.add(new SongTask<>(Type.USE_ITEM, base));
             }
         }
-        startTaskTimer();
+        startBuildTaskTimer();
     }
 
-    private void startTaskTimer() {
+    public void play() throws IOException {
+        tasks.clear();
+        bot.sendCommand("gamemode survival");
+        bot.sendCommand("clear");
+        startPlayerTask();
+    }
+
+    private void cleanUpTimer() {
         if (timer != null) timer.cancel();
         timer = new Timer(true);
+    }
+
+    private void startBuildTaskTimer() {
+        cleanUpTimer();
         timer.scheduleAtFixedRate(new TimerTask() {
             Iterator<SongTask<?>> taskI = tasks.iterator();
 
@@ -116,5 +130,41 @@ public class SongStructure {
                 }
             }
         }, 0, 100);
+    }
+
+    private void startPlayerTask() {
+        cleanUpTimer();
+        Map<Integer, List<SimpleNote>> notes = new HashMap<>();
+        for (Layer layer : track.getLayers()) for (Note note : layer.notes()) {
+            if (note.isWithinOctaveLimit() && note.instrument() instanceof VanillaInstrument v) {
+                notes.computeIfAbsent((int) note.tick(), e -> new ArrayList<>()).add(new SimpleNote(note.key(), v));
+            }
+        }
+        timer.scheduleAtFixedRate(new TimerTask() {
+            int tick = 0;
+
+            @Override
+            public void run() {
+                try {
+                    if (notes.containsKey(tick)) {
+                        for (SimpleNote note : notes.get(tick)) {
+                            if (SongStructure.this.notes.containsKey(note)) {
+                                bot.destroyBlock(
+                                        bot.getLocation().toBlockLocation().add(SongStructure.this.notes.get(note)));
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    cancel();
+                    cleanUpTimer();
+                }
+                tick++;
+                if (tick >= track.songLengthTicks()) {
+                    cancel();
+                    cleanUpTimer();
+                }
+            }
+        }, 500, (int) (1000 / track.tempo()));
     }
 }

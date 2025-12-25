@@ -45,10 +45,9 @@ public class Main {
                     if (firstTeleport) {
                         firstTeleport = false;
                         try {
-                            bot.sendCommand("gamemode creative");
-                            bot.sendCommand("clear");
 
-                            structure.build();
+//                            structure.build();
+                            structure.play();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

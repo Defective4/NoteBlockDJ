@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.nbsdj.music;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.github.defective4.minecraft.nbs.NBSTrack;
 import io.github.defective4.minecraft.nbs.model.Layer;
@@ -28,10 +30,11 @@ public class SongStructure {
 
     private final NoteBlockBot bot;
 
+    private final List<StructureListener> listeners = new CopyOnWriteArrayList<>();
     private final Map<SimpleNote, BlockLocation> notes = new LinkedHashMap<>();
     private final List<SongTask<?>> tasks = new ArrayList<>();
-    private Timer timer;
 
+    private Timer timer;
     private final NBSTrack track;
 
     public SongStructure(NBSTrack track, NoteBlockBot bot) {
@@ -59,6 +62,10 @@ public class SongStructure {
                 }
             }
         }
+    }
+
+    public boolean addListener(StructureListener listener) {
+        return listeners.add(listener);
     }
 
     public void build() throws IOException {
@@ -92,11 +99,19 @@ public class SongStructure {
         startBuildTaskTimer();
     }
 
+    public List<StructureListener> getListeners() {
+        return Collections.unmodifiableList(listeners);
+    }
+
     public void play() throws IOException {
         tasks.clear();
         bot.sendCommand("gamemode survival");
         bot.sendCommand("clear");
         startPlayerTask();
+    }
+
+    public boolean removeListener(StructureListener listener) {
+        return listeners.remove(listener);
     }
 
     private void cleanUpTimer() {
@@ -126,6 +141,13 @@ public class SongStructure {
                         cancel();
                         timer.cancel();
                         timer = null;
+                        listeners.forEach(t -> {
+                            try {
+                                t.structureBuilt();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -168,6 +190,13 @@ public class SongStructure {
                 if (tick >= track.songLengthTicks()) {
                     cancel();
                     cleanUpTimer();
+                    listeners.forEach(t -> {
+                        try {
+                            t.songEnded();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 }
             }
         }, 500, (int) (1000 / track.tempo()));

@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.nbsdj;
 
 import java.util.Timer;
 
+import io.github.defective4.minecraft.nbsdj.protocol.model.BlockLocation;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameProfile;
 import io.github.defective4.minecraft.nbsdj.protocol.model.GameState;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
@@ -45,11 +46,13 @@ public class Main {
                             bot.sendCommand("clear");
                             bot.createItem(36, new ItemStack(1, ItemType.DIRT));
                             for (int x = -4; x <= 4; x++) for (int z = -4; z <= 4; z++) {
+                                BlockLocation loc = newLocation.add(x, -1, z).toBlockLocation();
+                                bot.lookAt(loc.toVector3D());
                                 bot.swingArm(Hand.RIGHT);
-                                bot.destroyBlock(newLocation.add(x, -1, z).toBlockLocation());
-                                bot.placeBlock(newLocation.add(x, -1, z).toBlockLocation());
+                                bot.destroyBlock(loc);
+                                bot.placeBlock(loc);
                                 bot.swingArm(Hand.RIGHT);
-                                Thread.sleep(50);
+                                Thread.sleep(100);
                             }
                             bot.sendCommand("gamemode survival");
                             bot.sendCommand("clear");

@@ -18,6 +18,7 @@ import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.Cli
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientCreativeItemPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientDestroyBlockPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientPlaceBlockPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientRotatePlayerPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientSwingArmPacket;
 
 public class NoteBlockBot {
@@ -78,12 +79,27 @@ public class NoteBlockBot {
         return port;
     }
 
+    public void lookAt(Vector3D position) throws IOException {
+        double dx = location.x() - position.x();
+        double dy = location.y() - position.y();
+        double dz = location.z() - position.z();
+        float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) + 90;
+        double r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (yaw < 0) yaw = 360 + yaw;
+        float pitch = (float) (Math.sin(dy / r) / Math.PI * 180);
+        rotatePlayer(yaw, pitch);
+    }
+
     public void placeBlock(BlockLocation location) throws IOException {
         connection.sendPacket(new ClientPlaceBlockPacket(random.nextInt(0, Integer.MAX_VALUE), location));
     }
 
     public boolean removeListener(ClientListener listener) {
         return listeners.remove(listener);
+    }
+
+    public void rotatePlayer(float yaw, float pitch) throws IOException {
+        connection.sendPacket(new ClientRotatePlayerPacket(yaw, pitch));
     }
 
     public void sendCommand(String command) throws IOException {

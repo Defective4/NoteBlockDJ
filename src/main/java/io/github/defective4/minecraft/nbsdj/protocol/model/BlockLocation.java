@@ -24,6 +24,10 @@ public record BlockLocation(int x, int y, int z) {
     private static final int Z_OFFSET = 12;
     private static final int X_OFFSET = 38;
 
+    public Vector3D toVector3D() {
+        return new Vector3D(x, y, z);
+    }
+
     public long asLong() {
         long $$3 = 0L;
         $$3 |= (x & PACKED_X_MASK) << X_OFFSET;

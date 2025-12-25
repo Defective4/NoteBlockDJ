@@ -17,9 +17,9 @@ import io.github.defective4.minecraft.nbsdj.protocol.model.Vector3D;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientChatCommandPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientCreativeItemPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientDestroyBlockPacket;
-import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientPlaceBlockPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientRotatePlayerPacket;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientSwingArmPacket;
+import io.github.defective4.minecraft.nbsdj.protocol.packet.serverbound.play.ClientUseItemOnPacket;
 
 public class NoteBlockBot {
     private MinecraftConnection connection;
@@ -56,7 +56,9 @@ public class NoteBlockBot {
     }
 
     public void destroyBlock(BlockLocation location) throws IOException {
+        lookAt(location.toVector3D());
         connection.sendPacket(new ClientDestroyBlockPacket(location, Math.abs(random.nextInt())));
+        swingArm(Hand.RIGHT);
     }
 
     public int getEntityId() {
@@ -90,10 +92,6 @@ public class NoteBlockBot {
         rotatePlayer(yaw, pitch);
     }
 
-    public void placeBlock(BlockLocation location) throws IOException {
-        connection.sendPacket(new ClientPlaceBlockPacket(random.nextInt(0, Integer.MAX_VALUE), location));
-    }
-
     public boolean removeListener(ClientListener listener) {
         return listeners.remove(listener);
     }
@@ -121,5 +119,11 @@ public class NoteBlockBot {
 
     public void swingArm(Hand hand) throws IOException {
         connection.sendPacket(new ClientSwingArmPacket(hand));
+    }
+
+    public void useItem(BlockLocation location) throws IOException {
+        lookAt(location.toVector3D());
+        connection.sendPacket(new ClientUseItemOnPacket(random.nextInt(0, Integer.MAX_VALUE), location));
+        swingArm(Hand.RIGHT);
     }
 }

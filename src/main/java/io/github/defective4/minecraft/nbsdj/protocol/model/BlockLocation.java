@@ -28,6 +28,10 @@ public record BlockLocation(int x, int y, int z) {
         return new Vector3D(x, y, z);
     }
 
+    public BlockLocation add(int x, int y, int z) {
+        return new BlockLocation(this.x + x, this.y + y, this.z + z);
+    }
+
     public long asLong() {
         long $$3 = 0L;
         $$3 |= (x & PACKED_X_MASK) << X_OFFSET;

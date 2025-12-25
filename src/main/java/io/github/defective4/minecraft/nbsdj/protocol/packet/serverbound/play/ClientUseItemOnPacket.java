@@ -4,8 +4,8 @@ import io.github.defective4.minecraft.nbsdj.protocol.model.BlockLocation;
 import io.github.defective4.minecraft.nbsdj.protocol.model.Hand;
 import io.github.defective4.minecraft.nbsdj.protocol.packet.ServerboundPacket;
 
-public class ClientPlaceBlockPacket extends ServerboundPacket {
-    public ClientPlaceBlockPacket(int sequence, BlockLocation block) {
+public class ClientUseItemOnPacket extends ServerboundPacket {
+    public ClientUseItemOnPacket(int sequence, BlockLocation block) {
         super(63);
         writeVarInt(Hand.RIGHT.getInteractionId());
 
